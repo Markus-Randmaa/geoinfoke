@@ -59,3 +59,27 @@ app.api.Application.Run('WriteValue')
 print('Wrote N-1 values to device list')
  
 app.quit()
+
+#import os
+# Vaja oleks, et PSS v6tab skripti asukoha, kuid see ei tee seda...
+#dir_path = os.getcwd()
+
+## Ainuke path mis tuleb 2ra seadistada, et muud jupid toimiks
+dir_path = "C:\PSS\Contincency_analysis"
+
+#Solve FDNS
+psspy.fdns([0,0,0,1,0,0,99,0])
+
+#ACC contincency tegemine
+psspy.bsys(0,0,[ 0.4, 750.],0,[],0,[],3,[1,2,5],0,[]) #110,330 liinid, 330 trafod
+psspy.bsys(0,0,[ 0.4, 750.],0,[],0,[],3,[1,2,5],0,[])
+psspy.dfax([0,1],dir_path+r"""\sub.sub""",dir_path+r"""\mono.mon""",dir_path+r"""\conor.con""",dir_path+r"""\distr.dfx""")
+psspy.accc_with_dsp_3( 0.6,[0,0,0,1,0,2,0,0,0,0,0],r"""EESTI330""",dir_path+r"""\distr.dfx""",dir_path+r"""\out.acc""","","","")
+psspy.accc_single_run_report_4([0,1,2,2,2,0,1,0,0,0,0,1],[0,0,0,0,6000],[ 0.5, 5.0, 100.0,0.0,0.0,0.0, 99999.],dir_path+r"""\out.acc""")
+
+
+#Exceli faili koostamine
+
+import pssexcel
+
+pssexcel.accc(dir_path+r"""\out.acc""",'b', ratecon= 'a',flowlimit= 92 ,basevoltvio=True, xlsfile= dir_path+"\N_1.xls",voltchange=0.1, flowchange=0.9)
