@@ -60,6 +60,8 @@ print('Wrote N-1 values to device list')
  
 app.quit()
 
+#Alates siit on EJK kood
+
 #import os
 # Vaja oleks, et PSS v6tab skripti asukoha, kuid see ei tee seda...
 #dir_path = os.getcwd()
