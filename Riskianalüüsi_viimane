@@ -1,0 +1,61 @@
+### PSS/E N-1 arvutus  ###
+ 
+import os
+import subprocess
+import psse33, psspy, pssexcel
+import pandas as pd
+import openpyxl
+psspy.psseinit( 100000 )
+ 
+ 
+# Peaks andma faili enda asukoha path-i
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print(dir_path)
+ 
+psspy.case(r"""Winter High.sav""")
+ 
+sub = os.path.join(dir_path, "sub.sub")
+mon = os.path.join(dir_path, "mono.mon")
+con = os.path.join(dir_path, "conor.con")
+dfx = os.path.join(dir_path, "distr.dfx")
+acc = os.path.join(dir_path, "out.acc")
+excel_report = os.path.join(dir_path, "N_1.xls")
+ 
+#Solve FDNS
+psspy.fdns([0,0,0,1,0,0,99,0])
+ 
+#ACC contincency tegemine
+psspy.bsys(0,0,[ 0.4, 750.],0,[],0,[],3,[1,2,5],0,[]) #110,330 liinid, 330 trafod
+psspy.bsys(0,0,[ 0.4, 750.],0,[],0,[],3,[1,2,5],0,[])
+psspy.dfax([0,1], sub, mon, con, dfx)
+psspy.accc_with_dsp_3( 0.6,[0,0,0,1,0,2,0,0,0,0,0],r"""EESTI330""", dfx, acc,"","","")
+psspy.accc_single_run_report_4([0,1,2,2,2,0,1,0,0,0,0,1],[0,0,0,0,6000],[ 0.5, 5.0, 100.0,0.0,0.0,0.0, 99999.], acc)
+ 
+ 
+#Exceli faili koostamine
+import pssexcel
+pssexcel.accc(acc, 'l', ratecon= 'a',flowlimit= 92 ,basevoltvio=True, xlsfile= excel_report, overwritesheet=False, show=False, voltchange=0.1, flowchange=0.9, cosep=False) # export to this file
+print('Copying N-1 data to mapping file...')
+ 
+import xlwings as xw
+ 
+# Connect to an existing Excel instance or open a new one
+app = xw.App(visible=False)
+ 
+# Open the Excel workbook containing the VBA macro
+wb = os.path.join(dir_path, "SeadmeIDMapv2.xlsm")
+workbook = app.books.open(wb)
+#workbook = app.books.open(r'D:\Marko\N-1 Arvutus_edit\SeadmeIDMapv2.xlsm')
+ 
+# Run the VBA macro
+app.api.Application.Run('CopyColumnsAndSave')
+workbook.save()
+ 
+ 
+print('Done with copying')
+print('Opening devices, copying N-1 values...')
+ 
+app.api.Application.Run('WriteValue')
+print('Wrote N-1 values to device list')
+ 
+app.quit()
