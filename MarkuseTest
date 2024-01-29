@@ -1,6 +1,10 @@
 import os
 import psse33, psspy, pssexcel
 
+import subprocess
+import pandas as pd
+import openpyxl
+
 # Check if PSSE is already initialized
 try:
     psspy.psseinit()
@@ -10,18 +14,20 @@ except:
     psspy.psseinit()
 
 # Replace os.path.realpath(__file__) with an absolute path
-script_abs_path = r"D:\Markus\N-1 Arvutus_edit\Uus\NEWNEWTEST.py"
+script_abs_path = r"D:\Markus\N-1 Arvutus_edit\Uus\ExceliTest.py"
 
 # Get the directory of the current script
 dir_path = os.path.dirname(script_abs_path)
 print(dir_path)
+
+psspy.case(r"""Winter_High.sav""")
 
 sub = os.path.join(dir_path, "sub.sub")
 mon = os.path.join(dir_path, "mono.mon")
 con = os.path.join(dir_path, "conor.con")
 dfx = os.path.join(dir_path, "distr.dfx")
 acc = os.path.join(dir_path, "out.acc")
-excel_report = os.path.join(dir_path, "N_1testtest.xlsx")
+excel_report = os.path.join(dir_path, "ExceliTest.xlsx")
 
 # Solve FDNS
 psspy.fdns([0, 0, 0, 1, 0, 0, 99, 0])
@@ -30,13 +36,14 @@ psspy.fdns([0, 0, 0, 1, 0, 0, 99, 0])
 psspy.bsys(0, 0, [0.4, 750.], 0, [], 0, [], 3, [1, 2, 5], 0, [])  # 110,330 liinid, 330 trafod
 psspy.bsys(0, 0, [0.4, 750.], 0, [], 0, [], 3, [1, 2, 5], 0, [])
 psspy.dfax([0, 1], sub, mon, con, dfx)
-psspy.accc_with_dsp_3(0.6, [0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0], r"""EESTI330""", dfx, acc, "", "", "")
+psspy.accc_with_dsp_3(0.6, [0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0], r"""Winter_High.sav""", dfx, acc, "", "", "")
 psspy.accc_single_run_report_4([0, 1, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1], [0, 0, 0, 0, 6000], [0.5, 5.0, 100.0, 0.0, 0.0, 0.0, 99999.], acc)
 
-# Exceli faili koostamine
+# Exceli faili koostamine (probleem on PSSEXCELis)
 print('Copying N-1 data to mapping file...')
 pssexcel.accc(acc, 'l', ratecon='a', flowlimit=92, basevoltvio=True, xlsfile=excel_report, overwritesheet=True, show=False, voltchange=0.1, flowchange=0.9, cosep=False)
 print('ACCC data copied to excel')
+
 
 _________________________________________________________________________________________________________
 #ANNAB ALLOLEVA VASTUSE OUTPUTIS:
