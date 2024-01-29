@@ -27,7 +27,7 @@ mon = os.path.join(dir_path, "mono.mon")
 con = os.path.join(dir_path, "conor.con")
 dfx = os.path.join(dir_path, "distr.dfx")
 acc = os.path.join(dir_path, "out.acc")
-excel_report = os.path.join(dir_path, "ExceliTest.xlsx")
+excel_report = os.path.join(dir_path, "ExceliTest.xls")
 
 # Solve FDNS
 psspy.fdns([0, 0, 0, 1, 0, 0, 99, 0])
@@ -41,7 +41,7 @@ psspy.accc_single_run_report_4([0, 1, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1], [0, 0, 0, 0
 
 # Exceli faili koostamine (probleem on PSSEXCELis)
 print('Copying N-1 data to mapping file...')
-pssexcel.accc(acc, 'l', ratecon='a', flowlimit=92, basevoltvio=True, xlsfile=excel_report, overwritesheet=True, show=False, voltchange=0.1, flowchange=0.9, cosep=False)
+pssexcel.accc(acc, 'l', ratecon='a', flowlimit=92, basevoltvio=True, xlsfile=excel_report, overwritesheet=True, show=True, voltchange=0.1, flowchange=0.9, cosep=False)
 print('ACCC data copied to excel')
 
 
