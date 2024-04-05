@@ -44,21 +44,23 @@ print('Copying N-1 data to mapping file...')
 pssexcel.accc(acc, 'l', ratecon='a', flowlimit=92, basevoltvio=True, xlsfile=excel_report, overwritesheet=True, show=True, voltchange=0.1, flowchange=0.9, cosep=False)
 print('ACCC data copied to excel')
 
+______________________________________________________________-
+import pandas as pd
 
-_________________________________________________________________________________________________________
-#ANNAB ALLOLEVA VASTUSE OUTPUTIS:
+# Load the data from 'list.xls'
+df_list = pd.read_excel('list.xls')
 
-Copying N-1 data to mapping file...
-Traceback (most recent call last):
-  File "D:\Markus\N-1 Arvutus_edit\Uus\NEWNEWTEST.py", line 38, in <module>
-    pssexcel.accc(acc, 'l', ratecon='a', flowlimit=92, basevoltvio=True, xlsfile=excel_report, overwritesheet=True, show=False, voltchange=0.1, flowchange=0.9, cosep=False)
-  File ".\pssexcel.py", line 1198, in accc
-  File ".\pssexcel.py", line 266, in _open_workbook_worksheets
-  File ".\excelpy.py", line 739, in page_format
-  File ".\excelpy.py", line 770, in page_margin
-  File ".\excelpy.py", line 1915, in _valid_sheet
-  File "C:\Python27\lib\site-packages\win32com\client\dynamic.py", line 505, in __getattr__
-    ret = self._oleobj_.Invoke(retEntry.dispid,0,invoke_type,1)
-pywintypes.com_error: (-2147418111, 'Call was rejected by callee.', None, None)
+# Create a new DataFrame for 'values.xls'
+df_values = pd.DataFrame()
 
-Ehk pssexceli reaga mingi jama
+# Copy column A from 'list.xls' to column C in 'values.xls'
+df_values['C'] = df_list['A']
+
+# Copy column B from 'list.xls' to column D in 'values.xls'
+df_values['D'] = df_list['B']
+
+# Sort 'values.xls' by column D
+df_values.sort_values(by='D', inplace=True)
+
+# Write 'values.xls'
+df_values.to_excel('values.xls', index=False)
